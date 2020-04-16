@@ -1,7 +1,7 @@
-=== Wp Core ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== WP Core ===
+Contributors: shinobiworks
 Donate link: https://example.com/
-Tags: comments, spam
+Tags: core
 Requires at least: 4.5
 Tested up to: 5.4
 Requires PHP: 5.6
