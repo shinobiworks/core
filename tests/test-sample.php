@@ -1,8 +1,6 @@
 <?php
 /**
  * Class SampleTest
- *
- * @package Wp_Core
  */
 
 /**

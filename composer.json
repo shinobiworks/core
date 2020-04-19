@@ -1,5 +1,5 @@
 {
-  "name": "shinobiworks/wp-core",
+  "name": "shinobiworks/wp",
   "type": "library",
   "authors": [
     {
@@ -9,7 +9,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Shinobi_Works\\WP_Core\\": "src"
+      "Shinobi_Works\\WP\\": "src"
     }
   },
   "require": {
