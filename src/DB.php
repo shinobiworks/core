@@ -17,16 +17,17 @@ class DB {
 	/**
 	 * Check Table Exists
 	 *
-	 * @param string $name table name.
+	 * @param string $table table name without prefix.
 	 * @return boolean
 	 */
-	public static function is_table_exists( $name ) {
+	public static function is_table_exists( $table ) {
 		$flag = true;
 		global $wpdb;
+		$table = $wpdb->prefix . $table;
 		$table = $wpdb->get_var(
 			$wpdb->prepare(
 				'SHOW TABLES LIKE %s',
-				$name
+				$table
 			)
 		);
 		if ( is_null( $table ) ) {
@@ -39,24 +40,25 @@ class DB {
 	 * Create DB Table
 	 *
 	 * @param string $version current table version.
-	 * @param string $name table name.
+	 * @param string $table_name table name without prefix.
 	 * @param string $sql sql.
 	 * @return boolean
 	 */
-	public static function create_table( $version = '1.0.0', $name = '', $sql = '' ) {
-		if ( '' === $name || '' === $sql ) {
+	public static function create_table( $version = '1.0.0', $table_name = '', $sql = '' ) {
+		if ( '' === $table_name || '' === $sql ) {
 			return false;
 		}
-		$_installed_ver = \get_option( "{$name}_table_ver" );
-		$_is_table      = self::is_table_exists( $name );
-		if ( $_is_table && $version === $_installed_ver ) {
+		$installed_ver = \get_option( "{$table_name}_table_ver" );
+		$is_table      = self::is_table_exists( $table_name );
+		if ( $is_table && $version === $installed_ver ) {
 			return true; // This table already exists and same version.
 		}
 		global $wpdb;
+		$table_name      = $wpdb->prefix . $table_name;
 		$charset_collate = $wpdb->get_charset_collate();
 		include_once \ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( "CREATE TABLE $name ( $sql ) $charset_collate;" );
-		\update_option( $name, $version );
+		dbDelta( "CREATE TABLE $table_name ( $sql ) $charset_collate;" );
+		\update_option( $table_name, $version );
 		return true;
 	}
 
@@ -68,7 +70,7 @@ class DB {
 	 *
 	 * @return array
 	 */
-	function get_all_results( $table, $format = OBJECT ) {
+	public static function get_all_results( $table, $format = OBJECT ) {
 		global $wpdb;
 		$_transient = "{$table}_" . mb_strtolower( $format );
 		$_record    = get_transient( $_transient );
@@ -95,7 +97,7 @@ class DB {
 	 *
 	 * @return object
 	 */
-	function get_row_by_id( $table, $id ) {
+	public static function get_row_by_id( $table, $id ) {
 		$_all_results = get_all_results( $table );
 		if ( false === $_all_results ) {
 			return false;
@@ -115,7 +117,7 @@ class DB {
 	 * @param array  $where is array.
 	 * @return void|boolean
 	 */
-	function get_row( $table, $where = array() ) {
+	public static function get_row( $table, $where = array() ) {
 		if ( ! $where || ! is_array( $where ) ) {
 			return false;
 		}
@@ -142,7 +144,7 @@ class DB {
 	 *
 	 * @return boolean
 	 */
-	function insert( $table, $data, $format = null ) {
+	public static function insert( $table, $data, $format = null ) {
 		global $wpdb;
 		$wpdb->hide_errors();
 		$_result = $wpdb->insert( $table, $data, $format );
@@ -165,7 +167,7 @@ class DB {
 	 *
 	 * @return void
 	 */
-	function update( $table, $data, $where, $format = null, $where_format = array( '%d' ) ) {
+	public static function update( $table, $data, $where, $format = null, $where_format = array( '%d' ) ) {
 		global $wpdb;
 		$_result = $wpdb->update( $table, $data, $where, $format, $where_format );
 		delete_shinobi_transient( $table );
@@ -181,7 +183,7 @@ class DB {
 	 *
 	 * @return void
 	 */
-	function delete( $table, $where, $where_format = null ) {
+	public static function delete( $table, $where, $where_format = null ) {
 		global $wpdb;
 		$wpdb->delete( $table, $where, $where_format );
 		delete_shinobi_transient( $table );
@@ -193,7 +195,7 @@ class DB {
 	 * @param string $table is table name.
 	 * @return void
 	 */
-	function delete_shinobi_transient( $table ) {
+	public static function delete_shinobi_transient( $table ) {
 		$_format_arr = array(
 			'array_a',
 			'object',
@@ -204,22 +206,22 @@ class DB {
 	}
 
 	/**
-	 * Create options table in wpdb
+	 * This action is for "shinobi reviews"
 	 *
 	 * @return void
 	 */
-	add_action(
-		'init',
-		function() {
-			$_sql = '
-		ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-		option_name varchar(191) NOT NULL,
-		option_value longtext NOT NULL,
-		PRIMARY KEY  id (ID)
-            ';
-			create_table( '1.0.0', SHINOBI_OPTIONS_TABLE, $_sql );
-		}
-	);
+	// add_action(
+	// 	'init',
+	// 	function() {
+	// 		$_sql = '
+	// 	ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	// 	option_name varchar(191) NOT NULL,
+	// 	option_value longtext NOT NULL,
+	// 	PRIMARY KEY  id (ID)
+	//         ';
+	// 		create_table( '1.0.0', SHINOBI_OPTIONS_TABLE, $_sql );
+	// 	}
+	// );
 
 	/**
 	 * Get option value from shinobi options table
@@ -228,12 +230,12 @@ class DB {
 	 * @param string $default_value default option value.
 	 * @return boolean|string
 	 */
-	function get_option( $option_name, $default_value = false ) {
+	public static function get_option( $option_name, $default_value = false ) {
 		$_transient = "shinobi_reviews_{$option_name}";
 		$_record    = \get_transient( $_transient );
 		if ( false === $_record ) {
 			$_flag        = true;
-			$_options_arr = get_all_results( SHINOBI_OPTIONS_TABLE );
+			$_options_arr = self::get_all_results( SHINOBI_OPTIONS_TABLE );
 			if ( ! $_options_arr || ! is_array( $_options_arr ) ) {
 				return false;
 			}
@@ -261,20 +263,20 @@ class DB {
 	 * @param string $option_name is option name.
 	 * @param string $option_value is option value.
 	 */
-	function update_option( $option_name, $option_value ) {
+	public static function update_option( $option_name, $option_value ) {
 		if ( $option_value && is_array( $option_value ) ) {
 			$option_value = serialize( $option_value );
 		}
 		$option_name = trim( $option_name );
 		$_row        = get_row( SHINOBI_OPTIONS_TABLE, array( 'option_name' => $option_name ) );
 		if ( $_row ) {
-			update(
+			self::update(
 				SHINOBI_OPTIONS_TABLE,
 				array( 'option_value' => $option_value ),
 				array( 'ID' => $_row->ID )
 			);
 		} else {
-			insert(
+			self::insert(
 				SHINOBI_OPTIONS_TABLE,
 				array(
 					'option_name'  => $option_name,
