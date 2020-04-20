@@ -14,6 +14,8 @@ namespace Shinobi_Works\WP;
 
 class DB {
 
+	const PREFIX = 'shinobi_wp_';
+
 	/**
 	 * Check Table Exists
 	 *
@@ -69,9 +71,9 @@ class DB {
 	 * @param int    $format database format. The others are "ARRAY_A", "ARRAY_N"
 	 * @link https://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wpdb_Class
 	 *
-	 * @return object|array
+	 * @return array
 	 */
-	public static function get_all_results( $table, $format = OBJECT ) {
+	public static function get_results( $table, $format = OBJECT ) {
 		global $wpdb;
 		$table     = $wpdb->prefix . $table;
 		$transient = "{$table}_" . mb_strtolower( $format );
@@ -86,26 +88,26 @@ class DB {
 			if ( ! $record ) {
 				return false;
 			}
-			$record = $record[0];
+			$record = $record;
 			set_transient( $transient, $record );
 		}
 		return $record;
 	}
 
 	/**
-	 * Get Row
+	 * Get row from database
 	 *
-	 * @param string $table is table name.
-	 * @param int    $id    is id.
+	 * @param string $table table name.
+	 * @param int    $id    unique id.
 	 *
-	 * @return object
+	 * @return object|boolean
 	 */
 	public static function get_row_by_id( $table, $id ) {
-		$_all_results = get_all_results( $table );
-		if ( false === $_all_results ) {
+		$results = self::get_results( $table );
+		if ( false === $results ) {
 			return false;
 		}
-		foreach ( $_all_results as $index => $result ) {
+		foreach ( $results as $index => $result ) {
 			if ( (int) $id === (int) $result->ID ) {
 				return $result;
 			}
@@ -116,21 +118,21 @@ class DB {
 	/**
 	 * Get row by array from wpdb
 	 *
-	 * @param string $table is table name.
-	 * @param array  $where is array.
+	 * @param string $table table name.
+	 * @param array  $where array.
 	 * @return void|boolean
 	 */
-	public static function get_row( $table, $where = array() ) {
+	public static function get_row( $table, $where = [] ) {
 		if ( ! $where || ! is_array( $where ) ) {
 			return false;
 		}
-		$_all_results = get_all_results( $table );
-		if ( false === $_all_results ) {
+		$results = self::get_results( $table );
+		if ( false === $results ) {
 			return false;
 		}
 		$_key   = array_keys( $where )[0];
 		$_value = array_values( $where )[0];
-		foreach ( $_all_results as $index => $row ) {
+		foreach ( $results as $index => $row ) {
 			if ( isset( $row->$_key ) && $row->$_key === $_value ) {
 				return $row;
 			}
@@ -141,18 +143,19 @@ class DB {
 	/**
 	 * Insert
 	 *
-	 * @param string $table  is table name.
-	 * @param array  $data   is array.
-	 * @param string $format is format style.
+	 * @param string $table  table name.
+	 * @param array  $data   insert data.
+	 * @param string $format format style.
 	 *
 	 * @return boolean
 	 */
 	public static function insert( $table, $data, $format = null ) {
 		global $wpdb;
 		$wpdb->hide_errors();
-		$_result = $wpdb->insert( $table, $data, $format );
-		delete_shinobi_transient( $table );
-		if ( 1 === $_result ) {
+		$table  = $wpdb->prefix . $table;
+		$result = $wpdb->insert( $table, $data, $format );
+		self::delete_shinobi_transient( $table );
+		if ( 1 === $result ) {
 			return true;
 		} else {
 			return false;
@@ -209,24 +212,6 @@ class DB {
 	}
 
 	/**
-	 * This action is for "shinobi reviews"
-	 *
-	 * @return void
-	 */
-	// add_action(
-	// 	'init',
-	// 	function() {
-	// 		$_sql = '
-	// 	ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	// 	option_name varchar(191) NOT NULL,
-	// 	option_value longtext NOT NULL,
-	// 	PRIMARY KEY  id (ID)
-	//         ';
-	// 		create_table( '1.0.0', SHINOBI_OPTIONS_TABLE, $_sql );
-	// 	}
-	// );
-
-	/**
 	 * Get option value from shinobi options table
 	 *
 	 * @param string $option_name option name.
@@ -234,11 +219,11 @@ class DB {
 	 * @return boolean|string
 	 */
 	public static function get_option( $option_name, $default_value = false ) {
-		$transient = "shinobi_reviews_{$option_name}";
+		$transient = self::PREFIX . $option_name;
 		$record    = \get_transient( $transient );
 		if ( false === $record ) {
 			$_flag        = true;
-			$_options_arr = self::get_all_results( SHINOBI_OPTIONS_TABLE );
+			$_options_arr = self::get_results( SHINOBI_OPTIONS_TABLE );
 			if ( ! $_options_arr || ! is_array( $_options_arr ) ) {
 				return false;
 			}
@@ -287,7 +272,25 @@ class DB {
 				)
 			);
 		}
-		\delete_transient( "shinobi_reviews_{$option_name}" );
+		\delete_transient( self::PREFIX . $option_name );
 	}
+
+	/**
+	 * This action is for "shinobi reviews"
+	 *
+	 * @return void
+	 */
+	// add_action(
+	// 	'init',
+	// 	function() {
+	// 		$_sql = '
+	// 	ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	// 	option_name varchar(191) NOT NULL,
+	// 	option_value longtext NOT NULL,
+	// 	PRIMARY KEY  id (ID)
+	//         ';
+	// 		create_table( '1.0.0', SHINOBI_OPTIONS_TABLE, $_sql );
+	// 	}
+	// );
 
 }

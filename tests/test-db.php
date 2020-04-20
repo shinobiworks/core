@@ -13,9 +13,7 @@ class DB_Test extends WP_UnitTestCase {
 	const TABLE_NAME = 'my_awesome_table';
 
 	/**
-	 * Test creat table
-	 *
-	 * @return void
+	 * Test creat_table()
 	 */
 	public function test_create_table() {
 		/**
@@ -29,8 +27,8 @@ class DB_Test extends WP_UnitTestCase {
 		$version = '1.0.0';
 		$sql     = '
 		ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-		option_name varchar(191) NOT NULL,
-		option_value longtext NOT NULL,
+		user_name varchar(255) NOT NULL,
+		comment varchar(1000) NOT NULL,
 		PRIMARY KEY  id (ID)
 		';
 		$result  = DB::create_table( $version, self::TABLE_NAME, $sql );
@@ -49,11 +47,55 @@ class DB_Test extends WP_UnitTestCase {
 		// $this->assertTrue( true );
 	}
 
-	public function test_get_all_results() {
+	/**
+	 * Test to get from insert
+	 *
+	 * @method mixed insert()
+	 * @method mixed get_results()
+	 * @method mixed get_row_by_id()
+	 */
+	public function test_to_get_from_insert() {
+		$user_name = 'Shinobi Works';
+		$comment   = 'My First Comment';
+		$data      = [
+			'user_name' => $user_name,
+			'comment'   => $comment,
+		];
+		/**
+		 * Insert
+		 */
+		$this->assertTrue( DB::insert( self::TABLE_NAME, $data ) );
+		/**
+		 * Get results
+		 */
+		$get_results = DB::get_results( self::TABLE_NAME )[0];
+		$this->assertSame(
+			$user_name,
+			$get_results->user_name
+		);
+		/**
+		 * Get row of database by id
+		 */
+		for ( $i = 1; $i < 100; $i++ ) {
+			$get_row_by_id = DB::get_row_by_id( self::TABLE_NAME, $i );
+			if ( $get_row_by_id ) {
+				$this->assertSame(
+					$comment,
+					$get_row_by_id->comment
+				);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Test get_results()
+	 */
+	public function test_get_results() {
 		/**
 		 * Object
 		 */
-		$results = DB::get_all_results( 'users' );
+		$results = DB::get_results( 'users' )[0];
 		// ID
 		$expected = '1';
 		$actual   = $results->ID;
@@ -65,7 +107,7 @@ class DB_Test extends WP_UnitTestCase {
 		/**
 		 * Array of usermeta table
 		 */
-		$results = DB::get_all_results( 'usermeta', ARRAY_A );
+		$results = DB::get_results( 'usermeta', ARRAY_A )[0];
 		// Meta key
 		$expected = 'nickname';
 		$actual   = $results['meta_key'];
