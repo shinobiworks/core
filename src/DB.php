@@ -119,7 +119,7 @@ class DB {
 	 * Get row by array from wpdb
 	 *
 	 * @param string $table table name.
-	 * @param array  $where array.
+	 * @param array  $where search pattern.
 	 * @return void|boolean
 	 */
 	public static function get_row( $table, $where = [] ) {
@@ -130,10 +130,10 @@ class DB {
 		if ( false === $results ) {
 			return false;
 		}
-		$_key   = array_keys( $where )[0];
-		$_value = array_values( $where )[0];
+		$key   = array_keys( $where )[0];
+		$value = array_values( $where )[0];
 		foreach ( $results as $index => $row ) {
-			if ( isset( $row->$_key ) && $row->$_key === $_value ) {
+			if ( isset( $row->$key ) && $row->$key === $value ) {
 				return $row;
 			}
 		}

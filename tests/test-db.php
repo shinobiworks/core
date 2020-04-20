@@ -49,10 +49,6 @@ class DB_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test to get from insert
-	 *
-	 * @method mixed insert()
-	 * @method mixed get_results()
-	 * @method mixed get_row_by_id()
 	 */
 	public function test_to_get_from_insert() {
 		$user_name = 'Shinobi Works';
@@ -116,6 +112,30 @@ class DB_Test extends WP_UnitTestCase {
 		$expected = 'admin';
 		$actual   = $results['meta_value'];
 		$this->assertSame( $expected, $actual );
+	}
+
+	public function test_get_row() {
+		/**
+		 * Case.1 by "users table"
+		 */
+		$user_nicename  = 'admin';
+		$results_case_1 = DB::get_row(
+			'users',
+			[
+				'user_nicename' => $user_nicename,
+			]
+		);
+		$this->assertSame( $user_nicename, $results_case_1->user_nicename );
+		/**
+		 * Case.2 by "options table"
+		 */
+		$results_case_2 = DB::get_row(
+			'options',
+			[
+				'option_name' => 'admin_email',
+			]
+		);
+		$this->assertSame( $results_case_2->option_value, 'admin@example.org' );
 	}
 
 }
