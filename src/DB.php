@@ -66,27 +66,30 @@ class DB {
 	 * Get Results
 	 *
 	 * @param string $table  table name.
-	 * @param int    $format database format.
+	 * @param int    $format database format. The others are "ARRAY_A", "ARRAY_N"
+	 * @link https://wpdocs.osdn.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/wpdb_Class
 	 *
-	 * @return array
+	 * @return object|array
 	 */
 	public static function get_all_results( $table, $format = OBJECT ) {
 		global $wpdb;
-		$_transient = "{$table}_" . mb_strtolower( $format );
-		$_record    = get_transient( $_transient );
-		if ( false === $_record ) {
-			$_record = $wpdb->get_results(
-			// @codingStandardsIgnoreStart
-			"SELECT * FROM $table",
-			// @codingStandardsIgnoreEnd
+		$table     = $wpdb->prefix . $table;
+		$transient = "{$table}_" . mb_strtolower( $format );
+		$record    = get_transient( $transient );
+		if ( false === $record ) {
+			$record = $wpdb->get_results(
+				// @codingStandardsIgnoreStart
+				"SELECT * FROM $table",
+				// @codingStandardsIgnoreEnd
 				$format
 			);
-			if ( ! $_record ) {
+			if ( ! $record ) {
 				return false;
 			}
-			set_transient( $_transient, $_record );
+			$record = $record[0];
+			set_transient( $transient, $record );
 		}
-		return $_record;
+		return $record;
 	}
 
 	/**
@@ -231,9 +234,9 @@ class DB {
 	 * @return boolean|string
 	 */
 	public static function get_option( $option_name, $default_value = false ) {
-		$_transient = "shinobi_reviews_{$option_name}";
-		$_record    = \get_transient( $_transient );
-		if ( false === $_record ) {
+		$transient = "shinobi_reviews_{$option_name}";
+		$record    = \get_transient( $transient );
+		if ( false === $record ) {
 			$_flag        = true;
 			$_options_arr = self::get_all_results( SHINOBI_OPTIONS_TABLE );
 			if ( ! $_options_arr || ! is_array( $_options_arr ) ) {
@@ -241,20 +244,20 @@ class DB {
 			}
 			foreach ( $_options_arr as $index => $options ) {
 				if ( $option_name === $options->option_name ) {
-					$_record = $options->option_value;
-					$_flag   = true;
+					$record = $options->option_value;
+					$_flag  = true;
 					break;
 				} else {
 					$_flag = false;
 				}
 			}
 			if ( $_flag ) {
-				set_transient( $_transient, $_record );
+				set_transient( $transient, $record );
 			} else {
 				return $default_value;
 			}
 		}
-		return is_serialized( $_record ) ? unserialize( $_record ) : $_record;
+		return is_serialized( $record ) ? unserialize( $record ) : $record;
 	}
 
 	/**

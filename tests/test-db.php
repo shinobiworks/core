@@ -24,7 +24,7 @@ class DB_Test extends WP_UnitTestCase {
 		 *
 		 * @link https://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
 		 */
-		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		remove_filter( 'query', [ $this, '_create_temporary_tables' ] );
 
 		$version = '1.0.0';
 		$sql     = '
@@ -47,6 +47,33 @@ class DB_Test extends WP_UnitTestCase {
 		// global $wpdb;
 		// var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
 		// $this->assertTrue( true );
+	}
+
+	public function test_get_all_results() {
+		/**
+		 * Object
+		 */
+		$results = DB::get_all_results( 'users' );
+		// ID
+		$expected = '1';
+		$actual   = $results->ID;
+		$this->assertSame( $expected, $actual );
+		// Email
+		$expected = 'admin@example.org';
+		$actual   = $results->user_email;
+		$this->assertSame( $expected, $actual );
+		/**
+		 * Array of usermeta table
+		 */
+		$results = DB::get_all_results( 'usermeta', ARRAY_A );
+		// Meta key
+		$expected = 'nickname';
+		$actual   = $results['meta_key'];
+		$this->assertSame( $expected, $actual );
+		// Meta value
+		$expected = 'admin';
+		$actual   = $results['meta_value'];
+		$this->assertSame( $expected, $actual );
 	}
 
 }
