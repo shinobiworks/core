@@ -12,18 +12,32 @@ class DB_Test extends WP_UnitTestCase {
 
 	const TABLE_NAME = 'my_awesome_table';
 
+	private $test_user_name = 'Shinobi Works';
+	private $test_comment   = 'My First Comment';
+
+	/**
+	 * Setup
+	 */
+	public function setUp() {
+	}
+
+	/**
+	 * Test check tables
+	 *
+	 * @doesNotPerformAssertions
+	 */
+	public function test_check_tables() {
+		return;
+		// To check list of test database table, use below command.
+		global $wpdb;
+		var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
+		$this->assertTrue( true );
+	}
+
 	/**
 	 * Test creat_table()
 	 */
 	public function test_create_table() {
-		/**
-		 * To check the status of the database, I temporaray remove the "_create_temporary_tables" filter as you can see.
-		 * Of course, when I run phpunit, I have to refresh the database.
-		 *
-		 * @link https://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-		 */
-		remove_filter( 'query', [ $this, '_create_temporary_tables' ] );
-
 		$version = '1.0.0';
 		$sql     = '
 		ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -37,57 +51,48 @@ class DB_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test is_table_exists()
+	 *
+	 * @depends test_create_table
 	 */
 	public function test_is_table_exists() {
 		$result = DB::is_table_exists( self::TABLE_NAME );
 		$this->assertTrue( $result );
-		// To check list of test database table, use below command.
-		// global $wpdb;
-		// var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
-		// $this->assertTrue( true );
 	}
 
 	/**
-	 * Test to get from insert
+	 * Test insert()
+	 *
+	 * @depends test_create_table
 	 */
-	public function test_to_get_from_insert() {
-		$user_name = 'Shinobi Works';
-		$comment   = 'My First Comment';
-		$data      = [
-			'user_name' => $user_name,
-			'comment'   => $comment,
+	public function test_insert() {
+		$data = [
+			'user_name' => $this->test_user_name,
+			'comment'   => $this->test_comment,
 		];
-		/**
-		 * Insert
-		 */
 		$this->assertTrue( DB::insert( self::TABLE_NAME, $data ) );
+	}
+
+	/**
+	 * Test get_results()
+	 *
+	 * @depends test_create_table
+	 * @depends test_insert
+	 */
+	public function test_get_results() {
 		/**
 		 * Get results
 		 */
 		$get_results = DB::get_results( self::TABLE_NAME )[0];
 		$this->assertSame(
-			$user_name,
+			$this->test_user_name,
 			$get_results->user_name
 		);
-		/**
-		 * Get row of database by id
-		 */
-		for ( $i = 1; $i < 100; $i++ ) {
-			$get_row_by_id = DB::get_row_by_id( self::TABLE_NAME, $i );
-			if ( $get_row_by_id ) {
-				$this->assertSame(
-					$comment,
-					$get_row_by_id->comment
-				);
-				break;
-			}
-		}
 	}
 
 	/**
-	 * Test get_results()
+	 * Test get_results() for default database
 	 */
-	public function test_get_results() {
+	public function test_get_results_default() {
 		/**
 		 * Object
 		 */
@@ -114,7 +119,47 @@ class DB_Test extends WP_UnitTestCase {
 		$this->assertSame( $expected, $actual );
 	}
 
+	/**
+	 * Test get_row_by_id()
+	 *
+	 * @depends test_create_table
+	 * @depends test_insert
+	 */
+	public function test_get_row_by_id() {
+		/**
+		 * Get row of database by id
+		 */
+		for ( $i = 1; $i < 100; $i++ ) {
+			$get_row_by_id = DB::get_row_by_id( self::TABLE_NAME, $i );
+			if ( $get_row_by_id ) {
+				$this->assertSame(
+					$this->test_comment,
+					$get_row_by_id->comment
+				);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Test get_row()
+	 *
+	 * @depends test_create_table
+	 * @depends test_insert
+	 */
 	public function test_get_row() {
+		$where   = [
+			'user_name' => $this->test_user_name,
+		];
+		$results = DB::get_row( self::TABLE_NAME, $where );
+		$this->assertSame( $this->test_user_name, $results->user_name );
+	}
+
+
+	/**
+	 * Test get_row() for default database
+	 */
+	public function test_get_row_default() {
 		/**
 		 * Case.1 by "users table"
 		 */
