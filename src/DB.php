@@ -76,6 +76,10 @@ class DB {
 		return $wpdb->query( "DROP TABLE $table" );
 	}
 
+	private function transient_pattern( $table, $format ) {
+		return "{$table}_{$format}";
+	}
+
 	/**
 	 * Get Results
 	 *
@@ -88,7 +92,7 @@ class DB {
 	public static function get_results( $table, $format = OBJECT ) {
 		global $wpdb;
 		$table     = $wpdb->prefix . $table;
-		$transient = "{$table}_" . mb_strtolower( $format );
+		$transient = $this->transient_pattern( $table, mb_strtolower( $format ) );
 		$record    = get_transient( $transient );
 		if ( false === $record ) {
 			$record = $wpdb->get_results(
@@ -128,7 +132,7 @@ class DB {
 	}
 
 	/**
-	 * Get row by array from wpdb
+	 * Get row with array from wpdb
 	 *
 	 * @param string $table table name.
 	 * @param array  $where search pattern.
@@ -213,16 +217,20 @@ class DB {
 	/**
 	 * Delete Transient
 	 *
-	 * @param string $table is table name.
+	 * @param string $table table name without wpdb->prefix.
+	 *
+	 * @depends get_results
 	 * @return void
 	 */
 	public static function delete_shinobi_transient( $table ) {
-		$_format_arr = array(
-			'array_a',
-			'object',
-		);
-		foreach ( $_format_arr as $format ) {
-			\delete_transient( "{$table}_{$format}" );
+		// Using mb_strtolower().
+		$format_arr = [
+			'array_a', // ARRAY_A
+			'array_n', // ARRAY_N
+			'object', // OBJECT
+		];
+		foreach ( $format_arr as $format ) {
+			\delete_transient( $this->transient_pattern( $table, $format ) );
 		}
 	}
 
