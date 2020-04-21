@@ -65,6 +65,18 @@ class DB {
 	}
 
 	/**
+	 * Drop DB Table
+	 *
+	 * @param string $table table name
+	 * @return boolean
+	 */
+	public static function drop_table( $table ) {
+		global $wpdb;
+		$table = $wpdb->prefix . $table;
+		return $wpdb->query( "DROP TABLE $table" );
+	}
+
+	/**
 	 * Get Results
 	 *
 	 * @param string $table  table name.
@@ -165,19 +177,20 @@ class DB {
 	/**
 	 * Update
 	 *
-	 * @param string $table        is table name.
-	 * @param array  $data         is array.
-	 * @param string $where        is string.
-	 * @param string $format       is format style.
-	 * @param string $where_format is where format style.
+	 * @param string $table        table name.
+	 * @param array  $data         update data.
+	 * @param string $where        search pattern.
+	 * @param string $format       format style.
+	 * @param string $where_format format style of search pattern.
 	 *
 	 * @return void
 	 */
-	public static function update( $table, $data, $where, $format = null, $where_format = array( '%d' ) ) {
+	public static function update( $table, $data, $where, $format = null, $where_format = [ '%d' ] ) {
 		global $wpdb;
-		$_result = $wpdb->update( $table, $data, $where, $format, $where_format );
-		delete_shinobi_transient( $table );
-		return $_result;
+		$table  = $wpdb->prefix . $table;
+		$result = $wpdb->update( $table, $data, $where, $format, $where_format );
+		self::delete_shinobi_transient( $table );
+		return $result;
 	}
 
 	/**

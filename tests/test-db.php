@@ -16,6 +16,16 @@ class DB_Test extends WP_UnitTestCase {
 	private $test_comment   = 'My First Comment';
 
 	/**
+	 * After test, delete table
+	 *
+	 * @return void
+	 */
+	public static function tearDownAfterClass(): void {
+		// DB::drop_table( self::TABLE_NAME );
+	}
+
+
+	/**
 	 * Setup
 	 */
 	public function setUp() {
@@ -126,19 +136,11 @@ class DB_Test extends WP_UnitTestCase {
 	 * @depends test_insert
 	 */
 	public function test_get_row_by_id() {
-		/**
-		 * Get row of database by id
-		 */
-		for ( $i = 1; $i < 100; $i++ ) {
-			$get_row_by_id = DB::get_row_by_id( self::TABLE_NAME, $i );
-			if ( $get_row_by_id ) {
-				$this->assertSame(
-					$this->test_comment,
-					$get_row_by_id->comment
-				);
-				break;
-			}
-		}
+		$get_row_by_id = DB::get_row_by_id( self::TABLE_NAME, 1 );
+		$this->assertSame(
+			$this->test_comment,
+			$get_row_by_id->comment
+		);
 	}
 
 	/**
@@ -181,6 +183,32 @@ class DB_Test extends WP_UnitTestCase {
 			]
 		);
 		$this->assertSame( $results_case_2->option_value, 'admin@example.org' );
+	}
+
+	/**
+	 * Test update()
+	 *
+	 * @depends test_create_table
+	 */
+	public function test_update() {
+		$this->test_user_name = 'Shinobi Works 2.0';
+		$this->test_comment   = 'My Second Comment';
+		$update_data          = [
+			'user_name' => $this->test_user_name,
+			'comment'   => $this->test_comment,
+		];
+		$where                = [
+			'ID' => 1,
+		];
+		$update_result        = DB::update( self::TABLE_NAME, $update_data, $where );
+		$this->assertSame( 1, $update_result );
+	}
+
+	/**
+	 * Test drop_table()
+	 */
+	public function test_drop_table() {
+		$this->assertTrue( DB::drop_table( self::TABLE_NAME ) );
 	}
 
 }
