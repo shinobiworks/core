@@ -76,6 +76,13 @@ class DB {
 		return $wpdb->query( "DROP TABLE $table" );
 	}
 
+	/**
+	 * Transient pattern
+	 *
+	 * @param string $table table name
+	 * @param string $format object or array_a or array_n
+	 * @return string
+	 */
 	public static function transient_pattern( $table, $format ) {
 		return "{$table}_{$format}";
 	}
