@@ -76,7 +76,7 @@ class DB {
 		return $wpdb->query( "DROP TABLE $table" );
 	}
 
-	private function transient_pattern( $table, $format ) {
+	public static function transient_pattern( $table, $format ) {
 		return "{$table}_{$format}";
 	}
 
@@ -92,7 +92,7 @@ class DB {
 	public static function get_results( $table, $format = OBJECT ) {
 		global $wpdb;
 		$table     = $wpdb->prefix . $table;
-		$transient = $this->transient_pattern( $table, mb_strtolower( $format ) );
+		$transient = self::transient_pattern( $table, mb_strtolower( $format ) );
 		$record    = get_transient( $transient );
 		if ( false === $record ) {
 			$record = $wpdb->get_results(
@@ -230,7 +230,7 @@ class DB {
 			'object', // OBJECT
 		];
 		foreach ( $format_arr as $format ) {
-			\delete_transient( $this->transient_pattern( $table, $format ) );
+			\delete_transient( self::transient_pattern( $table, $format ) );
 		}
 	}
 
