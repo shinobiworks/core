@@ -12,8 +12,21 @@ class DB_Test extends WP_UnitTestCase {
 
 	const TABLE_NAME = 'my_awesome_table';
 
+	/**
+	 * Default global variable
+	 *
+	 * @var string
+	 */
 	private $test_user_name = 'Shinobi Works';
 	private $test_comment   = 'My First Comment';
+
+	/**
+	 * New global variable
+	 *
+	 * @var string
+	 */
+	private $new_test_user_name = 'Shinobi Works 2.0';
+	private $new_test_comment   = 'My Second Comment';
 
 	/**
 	 * After test, delete table
@@ -85,7 +98,6 @@ class DB_Test extends WP_UnitTestCase {
 	/**
 	 * Test get_results()
 	 *
-	 * @depends test_create_table
 	 * @depends test_insert
 	 */
 	public function test_get_results() {
@@ -132,7 +144,6 @@ class DB_Test extends WP_UnitTestCase {
 	/**
 	 * Test get_row_by_id()
 	 *
-	 * @depends test_create_table
 	 * @depends test_insert
 	 */
 	public function test_get_row_by_id() {
@@ -146,7 +157,6 @@ class DB_Test extends WP_UnitTestCase {
 	/**
 	 * Test get_row()
 	 *
-	 * @depends test_create_table
 	 * @depends test_insert
 	 */
 	public function test_get_row() {
@@ -191,17 +201,29 @@ class DB_Test extends WP_UnitTestCase {
 	 * @depends test_create_table
 	 */
 	public function test_update() {
-		$this->test_user_name = 'Shinobi Works 2.0';
-		$this->test_comment   = 'My Second Comment';
-		$update_data          = [
-			'user_name' => $this->test_user_name,
-			'comment'   => $this->test_comment,
+		$update_data   = [
+			'user_name' => $this->new_test_user_name,
+			'comment'   => $this->new_test_comment,
 		];
-		$where                = [
-			'ID' => 1,
-		];
-		$update_result        = DB::update( self::TABLE_NAME, $update_data, $where );
+		$where         = [ 'ID' => 1 ];
+		$update_result = DB::update( self::TABLE_NAME, $update_data, $where );
 		$this->assertSame( 1, $update_result );
+	}
+
+	/**
+	 * Test delete()
+	 *
+	 * @depends test_update
+	 */
+	public function test_delete() {
+		// Wrong case.
+		$wrong_where  = [ 'user_name' => $this->test_user_name ];
+		$wrong_result = DB::delete( self::TABLE_NAME, $wrong_where );
+		$this->assertFalse( $wrong_result );
+		// Currect case.
+		$where  = [ 'user_name' => $this->new_test_user_name ];
+		$result = DB::delete( self::TABLE_NAME, $where );
+		$this->assertTrue( $result );
 	}
 
 	/**

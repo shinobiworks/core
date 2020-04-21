@@ -194,18 +194,20 @@ class DB {
 	}
 
 	/**
-	 * Delete
+	 * Delete Row
 	 *
-	 * @param string $table        is table name.
-	 * @param string $where        is string.
-	 * @param string $where_format is where format style.
+	 * @param string $table        table name.
+	 * @param string $where        search pattern.
+	 * @param string $where_format format style of search pattern.
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public static function delete( $table, $where, $where_format = null ) {
 		global $wpdb;
-		$wpdb->delete( $table, $where, $where_format );
-		delete_shinobi_transient( $table );
+		$table  = $wpdb->prefix . $table;
+		$result = $wpdb->delete( $table, $where, $where_format );
+		self::delete_shinobi_transient( $table );
+		return 0 !== $result ? true : false;
 	}
 
 	/**
