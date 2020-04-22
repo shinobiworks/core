@@ -6,8 +6,8 @@ use Shinobi_Works\WP\DB;
 
 class Bootstrap {
 
-	public static function init() {
-		add_action( 'init', [ __CLASS__, 'create_options_table' ] );
+	public function __construct() {
+		add_action( 'init', [ $this, 'create_options_table' ] );
 	}
 
 	/**
@@ -15,7 +15,7 @@ class Bootstrap {
 	 *
 	 * @return void
 	 */
-	public static function create_options_table() {
+	public function create_options_table() {
 		$version = '1.0.1';
 		$table   = DB::OPTIONS_TABLE;
 		$sql     = '
@@ -28,5 +28,3 @@ class Bootstrap {
 	}
 
 }
-
-Bootstrap::init();

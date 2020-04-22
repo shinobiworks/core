@@ -239,7 +239,8 @@ class DB_Test extends WP_UnitTestCase {
 	 */
 	public function test_insert_option() {
 		// Create options table.
-		Bootstrap::create_options_table();
+		$bootstrap = new Bootstrap();
+		$bootstrap->create_options_table();
 		/**
 		 * Insert pattern 1
 		 */
