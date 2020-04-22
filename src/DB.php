@@ -14,7 +14,6 @@ namespace Shinobi_Works\WP;
 
 class DB {
 
-	const PREFIX        = 'shinobi_wp_';
 	const OPTIONS_TABLE = 'shinobi_options';
 
 	/**
@@ -250,7 +249,7 @@ class DB {
 	 * @return boolean|string
 	 */
 	public static function get_option( $option_name, $default_value = false ) {
-		$transient = self::PREFIX . $option_name;
+		$transient = self::shinobi_options_transient_pattern( $option_name );
 		$record    = \get_transient( $transient );
 		if ( false === $record ) {
 			$_flag        = true;
@@ -303,7 +302,17 @@ class DB {
 				]
 			);
 		}
-		\delete_transient( self::PREFIX . $option_name );
+		\delete_transient( self::shinobi_options_transient_pattern( $option_name ) );
+	}
+
+	/**
+	 * Transient pattern of "shinobi_options"
+	 *
+	 * @param string $option_name option name
+	 * @return string
+	 */
+	public static function shinobi_options_transient_pattern( $option_name ) {
+		return "shinobi_wp_{$option_name}";
 	}
 
 }

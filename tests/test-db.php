@@ -35,7 +35,6 @@ class DB_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public static function setUpBeforeClass() {
-		Bootstrap::create_options_table();
 	}
 
 	/**
@@ -219,10 +218,34 @@ class DB_Test extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 	}
 
-	public function test_get_option() {
-	}
-
-	public function test_update_option() {
+	/**
+	 * Test get_option(), update_option()
+	 *
+	 * @return void
+	 */
+	public function test_option() {
+		// Create options table.
+		Bootstrap::create_options_table();
+		// Testing value.
+		$option_name      = 'my_first_option_name';
+		$option_value     = 'my_first_option_value';
+		$new_option_value = 'my_second_option_value';
+		/**
+		 * Insert option value.
+		 */
+		DB::update_option( $option_name, $option_value );
+		// Case1: Success.
+		$this->assertSame( $option_value, DB::get_option( $option_name ) );
+		// Case2. Error.
+		$this->assertNotSame( $new_option_value, DB::get_option( $option_name ) );
+		/**
+		 * Update option value.
+		 */
+		DB::update_option( $option_name, $new_option_value );
+		// Case1: Error.
+		$this->assertNotSame( $option_value, DB::get_option( $option_name ) );
+		// Case1: Success.
+		$this->assertSame( $new_option_value, DB::get_option( $option_name ) );
 	}
 
 	/**
@@ -231,7 +254,7 @@ class DB_Test extends WP_UnitTestCase {
 	 * @doesNotPerformAssertions
 	 */
 	public function test_check_tables() {
-		// return;
+		return;
 		// To check list of test database table, use below command.
 		global $wpdb;
 		var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
@@ -243,6 +266,7 @@ class DB_Test extends WP_UnitTestCase {
 	 */
 	public function test_drop_table() {
 		$this->assertTrue( DB::drop_table( self::TABLE_NAME ) );
+		$this->assertTrue( DB::drop_table( DB::OPTIONS_TABLE ) );
 	}
 
 }
