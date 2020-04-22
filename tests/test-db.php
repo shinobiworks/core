@@ -3,6 +3,7 @@
  * Class DB_Test
  */
 
+use Shinobi_Works\WP\Bootstrap;
 use Shinobi_Works\WP\DB;
 
 /**
@@ -29,14 +30,13 @@ class DB_Test extends WP_UnitTestCase {
 	private $new_test_comment   = 'My Second Comment';
 
 	/**
-	 * After test, delete table
+	 * Before class runnning
 	 *
 	 * @return void
 	 */
-	public static function tearDownAfterClass(): void {
-		// DB::drop_table( self::TABLE_NAME );
+	public static function setUpBeforeClass() {
+		Bootstrap::create_options_table();
 	}
-
 
 	/**
 	 * Setup
@@ -45,16 +45,9 @@ class DB_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test check tables
-	 *
-	 * @doesNotPerformAssertions
+	 * Teardown
 	 */
-	public function test_check_tables() {
-		return;
-		// To check list of test database table, use below command.
-		global $wpdb;
-		var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
-		$this->assertTrue( true );
+	public function tearDown() {
 	}
 
 	/**
@@ -224,6 +217,25 @@ class DB_Test extends WP_UnitTestCase {
 		$where  = [ 'user_name' => $this->new_test_user_name ];
 		$result = DB::delete( self::TABLE_NAME, $where );
 		$this->assertTrue( $result );
+	}
+
+	public function test_get_option() {
+	}
+
+	public function test_update_option() {
+	}
+
+	/**
+	 * Test check tables
+	 *
+	 * @doesNotPerformAssertions
+	 */
+	public function test_check_tables() {
+		// return;
+		// To check list of test database table, use below command.
+		global $wpdb;
+		var_dump( $wpdb->get_results( 'SHOW TABLES' ) );
+		$this->assertTrue( true );
 	}
 
 	/**

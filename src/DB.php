@@ -14,7 +14,8 @@ namespace Shinobi_Works\WP;
 
 class DB {
 
-	const PREFIX = 'shinobi_wp_';
+	const PREFIX        = 'shinobi_wp_';
+	const OPTIONS_TABLE = 'shinobi_options';
 
 	/**
 	 * Check Table Exists
@@ -253,7 +254,7 @@ class DB {
 		$record    = \get_transient( $transient );
 		if ( false === $record ) {
 			$_flag        = true;
-			$_options_arr = self::get_results( SHINOBI_OPTIONS_TABLE );
+			$_options_arr = self::get_results( self::OPTIONS_TABLE );
 			if ( ! $_options_arr || ! is_array( $_options_arr ) ) {
 				return false;
 			}
@@ -286,41 +287,23 @@ class DB {
 			$option_value = serialize( $option_value );
 		}
 		$option_name = trim( $option_name );
-		$_row        = get_row( SHINOBI_OPTIONS_TABLE, array( 'option_name' => $option_name ) );
-		if ( $_row ) {
+		$row         = self::get_row( self::OPTIONS_TABLE, [ 'option_name' => $option_name ] );
+		if ( $row ) {
 			self::update(
-				SHINOBI_OPTIONS_TABLE,
-				array( 'option_value' => $option_value ),
-				array( 'ID' => $_row->ID )
+				self::OPTIONS_TABLE,
+				[ 'option_value' => $option_value ],
+				[ 'ID' => $row->ID ]
 			);
 		} else {
 			self::insert(
-				SHINOBI_OPTIONS_TABLE,
-				array(
+				self::OPTIONS_TABLE,
+				[
 					'option_name'  => $option_name,
 					'option_value' => $option_value,
-				)
+				]
 			);
 		}
 		\delete_transient( self::PREFIX . $option_name );
 	}
-
-	/**
-	 * This action is for "shinobi reviews"
-	 *
-	 * @return void
-	 */
-	// add_action(
-	// 	'init',
-	// 	function() {
-	// 		$_sql = '
-	// 	ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	// 	option_name varchar(191) NOT NULL,
-	// 	option_value longtext NOT NULL,
-	// 	PRIMARY KEY  id (ID)
-	//         ';
-	// 		create_table( '1.0.0', SHINOBI_OPTIONS_TABLE, $_sql );
-	// 	}
-	// );
 
 }
