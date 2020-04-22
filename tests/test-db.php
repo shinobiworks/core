@@ -226,7 +226,11 @@ class DB_Test extends WP_UnitTestCase {
 	private $first_option_name   = 'my_first_option_name';
 	private $first_option_value  = 'my_first_option_value';
 	private $second_option_name  = 'my_second_option_name';
-	private $second_option_value = 'my_second_option_value';
+	private $second_option_value = [
+		'drink' => 'beer',
+		'where' => 'bar',
+		'who'   => 'friends',
+	];
 
 	/**
 	 * Test update_option(), get_option()
@@ -266,7 +270,7 @@ class DB_Test extends WP_UnitTestCase {
 		/**
 		 * Update pattern 2
 		 */
-		$second_update_option_value = 'I am super second option value';
+		$second_update_option_value = 'I cloud not go home.';
 		DB::update_option( $this->second_option_name, $second_update_option_value );
 		$this->assertSame( $second_update_option_value, DB::get_option( $this->second_option_name ) );
 	}

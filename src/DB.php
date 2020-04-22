@@ -246,7 +246,7 @@ class DB {
 	 *
 	 * @param string $option_name option name.
 	 * @param string $default_value default option value.
-	 * @return boolean|string
+	 * @return boolean|array
 	 */
 	public static function get_option( $option_name, $default_value = false ) {
 		$transient = self::shinobi_options_transient_pattern( $option_name );
@@ -272,7 +272,7 @@ class DB {
 				return $default_value;
 			}
 		}
-		return is_serialized( $record ) ? unserialize( $record ) : $record;
+		return self::is_json( $record ) ? json_decode( $record, true ) : $record;
 	}
 
 	/**
@@ -283,7 +283,7 @@ class DB {
 	 */
 	public static function update_option( $option_name, $option_value ) {
 		if ( $option_value && is_array( $option_value ) ) {
-			$option_value = serialize( $option_value );
+			$option_value = wp_json_encode( $option_value );
 		}
 		$option_name = trim( $option_name );
 		$row         = self::get_row( self::OPTIONS_TABLE, [ 'option_name' => $option_name ] );
@@ -313,6 +313,16 @@ class DB {
 	 */
 	public static function shinobi_options_transient_pattern( $option_name ) {
 		return "shinobi_wp_{$option_name}";
+	}
+
+	/**
+	 * Check if json data
+	 *
+	 * @param string $string is option data
+	 * @return boolean
+	 */
+	public static function is_json( $string ) {
+		return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( JSON_ERROR_NONE === json_last_error() ) ? true : false;
 	}
 
 }
