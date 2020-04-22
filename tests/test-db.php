@@ -219,33 +219,56 @@ class DB_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test get_option(), update_option()
+	 * Testing value for options table
+	 *
+	 * @var string
+	 */
+	private $first_option_name   = 'my_first_option_name';
+	private $first_option_value  = 'my_first_option_value';
+	private $second_option_name  = 'my_second_option_name';
+	private $second_option_value = 'my_second_option_value';
+
+	/**
+	 * Test update_option(), get_option()
 	 *
 	 * @return void
 	 */
-	public function test_option() {
+	public function test_insert_option() {
 		// Create options table.
 		Bootstrap::create_options_table();
-		// Testing value.
-		$option_name      = 'my_first_option_name';
-		$option_value     = 'my_first_option_value';
-		$new_option_value = 'my_second_option_value';
 		/**
-		 * Insert option value.
+		 * Insert pattern 1
 		 */
-		DB::update_option( $option_name, $option_value );
-		// Case1: Success.
-		$this->assertSame( $option_value, DB::get_option( $option_name ) );
-		// Case2. Error.
-		$this->assertNotSame( $new_option_value, DB::get_option( $option_name ) );
+		DB::update_option( $this->first_option_name, $this->first_option_value );
+		$this->assertSame( $this->first_option_value, DB::get_option( $this->first_option_name ) );
 		/**
-		 * Update option value.
+		 * Insert pattern 2
 		 */
-		DB::update_option( $option_name, $new_option_value );
-		// Case1: Error.
-		$this->assertNotSame( $option_value, DB::get_option( $option_name ) );
-		// Case1: Success.
-		$this->assertSame( $new_option_value, DB::get_option( $option_name ) );
+		DB::update_option( $this->second_option_name, $this->second_option_value );
+		$this->assertSame( $this->second_option_value, DB::get_option( $this->second_option_name ) );
+	}
+
+	/**
+	 * Test update_option(), get_option()
+	 *
+	 * @depends test_insert_option
+	 */
+	public function test_update_option() {
+		// Check option value exists.
+		$this->assertSame( $this->first_option_value, DB::get_option( $this->first_option_name ) );
+		$this->assertSame( $this->second_option_value, DB::get_option( $this->second_option_name ) );
+		/**
+		 * Update pattern 1
+		 */
+		$first_update_option_value = 'I am super first option value';
+		DB::update_option( $this->first_option_name, $first_update_option_value );
+		$this->assertSame( $first_update_option_value, DB::get_option( $this->first_option_name ) );
+		/**
+		 * Update pattern 2
+		 */
+		$second_update_option_value = 'I am super second option value';
+		DB::update_option( $this->second_option_name, $second_update_option_value );
+		$this->assertSame( $second_update_option_value, DB::get_option( $this->second_option_name ) );
 	}
 
 	/**
