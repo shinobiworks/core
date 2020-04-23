@@ -35,6 +35,8 @@ class DB_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public static function setUpBeforeClass() {
+		new Bootstrap();
+		do_action( 'init' );
 	}
 
 	/**
@@ -238,9 +240,6 @@ class DB_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_insert_option() {
-		// Create options table.
-		$bootstrap = new Bootstrap();
-		$bootstrap->create_options_table();
 		/**
 		 * Insert pattern 1
 		 */
