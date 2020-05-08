@@ -278,8 +278,8 @@ class DB {
 	/**
 	 * Update option value in shinobi options table
 	 *
-	 * @param string $option_name is option name.
-	 * @param string $option_value is option value.
+	 * @param string $option_name option name.
+	 * @param string $option_value option value.
 	 */
 	public static function update_option( $option_name, $option_value ) {
 		if ( $option_value && is_array( $option_value ) ) {
@@ -303,6 +303,20 @@ class DB {
 			);
 		}
 		\delete_transient( self::shinobi_options_transient_pattern( $option_name ) );
+	}
+
+	/**
+	 * Delete option value in shinobi options table
+	 *
+	 * @param string $option_name option name.
+	 * @return boolean|null
+	 */
+	public static function delete_option( $option_name ) {
+		if ( ! self::get_option( $option_name ) ) {
+			return null;
+		}
+		\delete_transient( self::shinobi_options_transient_pattern( $option_name ) );
+		return self::delete( self::OPTIONS_TABLE, [ 'option_name' => $option_name ] );
 	}
 
 	/**

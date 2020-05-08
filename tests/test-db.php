@@ -281,6 +281,16 @@ class DB_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test delete_option()
+	 *
+	 * @depends test_update_option
+	 */
+	public function test_delete_option() {
+		$this->assertTrue( DB::delete_option( $this->first_option_name ) );
+		$this->assertFalse( DB::get_option( $this->first_option_name ) );
+	}
+
+	/**
 	 * Test check tables
 	 *
 	 * @doesNotPerformAssertions
