@@ -281,6 +281,44 @@ class DB_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test update_option()
+	 *
+	 * @return void
+	 */
+	public function test_update_option_iregular() {
+		$option_name = 'iregular_option';
+
+		DB::update_option( $option_name, '' );
+		$this->assertSame( '', DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, null );
+		$this->assertSame( '', DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, true );
+		$this->assertSame( '1', DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, false );
+		$this->assertSame( '', DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, [] );
+		$this->assertSame( [], DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, [ 1, 2, 3 ] );
+		$this->assertSame( [ 1, 2, 3 ], DB::get_option( $option_name ) );
+
+		DB::update_option( $option_name, [ 'a', 'b', 'c' ] );
+		$this->assertSame( [ 'a', 'b', 'c' ], DB::get_option( $option_name ) );
+
+		$test_array = [
+			'a' => 1,
+			'b' => 2,
+			'c' => [],
+		];
+		DB::update_option( $option_name, $test_array );
+		$this->assertSame( $test_array, DB::get_option( $option_name ) );
+	}
+
+	/**
 	 * Test delete_option()
 	 *
 	 * @depends test_update_option

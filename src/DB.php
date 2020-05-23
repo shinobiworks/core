@@ -282,11 +282,9 @@ class DB {
 	 * @param string $option_value option value.
 	 */
 	public static function update_option( $option_name, $option_value ) {
-		if ( $option_value && is_array( $option_value ) ) {
-			$option_value = wp_json_encode( $option_value );
-		}
-		$option_name = trim( $option_name );
-		$row         = self::get_row( self::OPTIONS_TABLE, [ 'option_name' => $option_name ] );
+		$option_name  = trim( $option_name );
+		$option_value = is_array( $option_value ) ? wp_json_encode( $option_value ) : (string) $option_value;
+		$row          = self::get_row( self::OPTIONS_TABLE, [ 'option_name' => $option_name ] );
 		if ( $row ) {
 			self::update(
 				self::OPTIONS_TABLE,
