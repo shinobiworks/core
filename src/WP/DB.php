@@ -2,11 +2,10 @@
 /**
  * Database Functions
  *
- * @category   Functions for WordPress
  * @package    Shinobi_Works\WP
  * @author     Shinobi Works <support@shinobiworks.com>
  * @license    https://www.gnu.org/licenses/gpl-3.0.html/ GPL v3 or later
- * @link       https://shinobiworks.com
+ * @link       https://shinobiworks.com/
  * @since      0.1.1
  */
 
@@ -143,7 +142,7 @@ class DB {
 	 *
 	 * @param string $table table name.
 	 * @param array  $where search pattern.
-	 * @return void|boolean
+	 * @return object|false
 	 */
 	public static function get_row( $table, $where = [] ) {
 		if ( ! $where || ! is_array( $where ) ) {
