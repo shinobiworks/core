@@ -39,8 +39,12 @@ class Converter {
 			return false;
 		}
 		$atts = '';
+		$max  = count( $atts_array );
+		$i    = 0;
 		foreach ( $atts_array as $key => $value ) {
-			$atts .= PHP_EOL . $key . '="' . $value . '"';
+			++$i;
+			$space = $i === $max ? '' : ' ';
+			$atts .= "{$key}=\"{$value}\"{$space}";
 		}
 		if ( $old_atts && is_string( $old_atts ) ) {
 			$atts .= " $old_atts";
