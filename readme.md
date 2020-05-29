@@ -1,5 +1,5 @@
-# WordPress Core Package of Shinobi Works
+# Core Package of Shinobi Works
 
 ```
-$ composer require shinobiworks/wp-core
+$ composer require shinobiworks/core
 ```
