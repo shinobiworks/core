@@ -37,7 +37,11 @@ class ConstraintTest extends WP_UnitTestCase {
 		];
 		$pass_group[] = [
 			'expected' => '',
-			'actual'   => '<div>　</div>',
+			'actual'   => '<div>　　　</div>',
+		];
+		$pass_group[] = [
+			'expected' => '',
+			'actual'   => '<div>   </div>',
 		];
 		foreach ( $pass_group as $arr ) {
 			$this->assertSame( $arr['expected'], Constraint::is_text( $arr['actual'] ) );

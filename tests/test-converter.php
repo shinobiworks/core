@@ -6,6 +6,9 @@
 use PHPUnit\Framework\TestCase;
 use Shinobi_Works\Converter;
 
+/**
+ * Coverter Test Class
+ */
 class ConverterTest extends TestCase {
 
 	/**
