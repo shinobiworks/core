@@ -9,6 +9,8 @@
  * @since      0.6.0
  */
 
+namespace Shinobi_Works\WP;
+
 /**
  * Utils Class
  */
