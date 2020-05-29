@@ -3,9 +3,10 @@
  * Converter Test
  */
 
+use PHPUnit\Framework\TestCase;
 use Shinobi_Works\Converter;
 
-class ConverterTest extends WP_UnitTestCase {
+class ConverterTest extends TestCase {
 
 	/**
 	 * Test mb_trim()

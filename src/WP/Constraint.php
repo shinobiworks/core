@@ -22,7 +22,7 @@ class Constraint {
 	 * Check if pure text exists
 	 *
 	 * @param string $string
-	 * @return boolean
+	 * @return string
 	 */
 	public static function is_text( $string ) {
 		return Converter::mb_trim( wp_strip_all_tags( $string ) );
