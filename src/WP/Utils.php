@@ -17,47 +17,56 @@ namespace Shinobi_Works\WP;
 class Utils {
 
 	/**
+	 * Echo the SVG after escaping.
+	 *
+	 * @param string $svg
+	 * @return void
+	 */
+	public static function esc_svg_e( $svg ) {
+		echo self::esc_svg( $svg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
 	 * Escape SVG
 	 *
 	 * @param string $svg
+	 * @return string
 	 */
-	public static function esc_svg( $svg, $echo = false ) {
-		$allowed_html = [
-			'svg'            => [
-				'class'           => true,
-				'aria-hidden'     => true,
-				'aria-labelledby' => true,
-				'role'            => true,
-				'xmlns'           => true,
-				'width'           => true,
-				'height'          => true,
-				'viewbox'         => true,
-			],
-			'defs'           => true,
-			'lineargradient' => [
-				'id' => true,
-			],
-			'stop'           => [
-				'offset'     => true,
-				'stop-color' => true,
-			],
-			'g'              => [ 'fill' => true ],
-			'title'          => [ 'title' => true ],
-			'path'           => [
-				'd'    => true,
-				'fill' => true,
-			],
-			'circle'         => [
-				'cx' => true,
-				'cy' => true,
-				'r'  => true,
-			],
-		];
-		if ( $echo ) {
-			echo wp_kses( $svg, $allowed_html );
-		} else {
-			return wp_kses( $svg, $allowed_html );
-		}
+	public static function esc_svg( $svg ) {
+		return wp_kses(
+			$svg,
+			[
+				'svg'            => [
+					'class'           => true,
+					'aria-hidden'     => true,
+					'aria-labelledby' => true,
+					'role'            => true,
+					'xmlns'           => true,
+					'width'           => true,
+					'height'          => true,
+					'viewbox'         => true,
+				],
+				'defs'           => true,
+				'lineargradient' => [
+					'id' => true,
+				],
+				'stop'           => [
+					'offset'     => true,
+					'stop-color' => true,
+				],
+				'g'              => [ 'fill' => true ],
+				'title'          => [ 'title' => true ],
+				'path'           => [
+					'd'    => true,
+					'fill' => true,
+				],
+				'circle'         => [
+					'cx' => true,
+					'cy' => true,
+					'r'  => true,
+				],
+			]
+		);
 	}
 
 }
