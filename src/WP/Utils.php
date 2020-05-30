@@ -69,4 +69,77 @@ class Utils {
 		);
 	}
 
+	/**
+	 * Echo input tag after escaping
+	 *
+	 * @param string $input
+	 * @return void
+	 */
+	public static function esc_input_e( $input ) {
+		echo self::esc_input( $input ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Escape input tag
+	 *
+	 * @param string $input
+	 * @return string
+	 */
+	public static function esc_input( $input ) {
+		return wp_kses(
+			$input,
+			[
+				'input' => [
+					'type'             => true,
+					'value'            => true,
+					'autocomplete'     => true,
+					'autofocus'        => true,
+					'disabled'         => true,
+					'form'             => true,
+					'list'             => true,
+					'name'             => true,
+					'readonly'         => true,
+					'required'         => true,
+					'tabindex'         => true,
+					'aria-describedby' => true,
+					'aria-details'     => true,
+					'aria-label'       => true,
+					'aria-labelledby'  => true,
+					'aria-hidden'      => true,
+					'class'            => true,
+					'id'               => true,
+					'style'            => true,
+					'title'            => true,
+					'role'             => true,
+					'data-*'           => true,
+				],
+			]
+		);
+	}
+
+	/**
+	 * Echo the textare after escaping
+	 *
+	 * @param string $textarea
+	 * @return void
+	 */
+	public static function esc_textarea_e( $textarea ) {
+		echo self::esc_textarea( $textarea ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Escape textare
+	 *
+	 * @param string $textarea
+	 * @return string
+	 */
+	public static function esc_textarea( $textarea ) {
+		return wp_kses(
+			$textarea,
+			[
+				'textarea' => wp_kses_allowed_html( 'post' )['textarea'],
+			]
+		);
+	}
+
 }

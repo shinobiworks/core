@@ -6,7 +6,7 @@
 use Shinobi_Works\WP\Constraint;
 
 /**
- * Constraint Class
+ * Constraint Test Class
  */
 class ConstraintTest extends WP_UnitTestCase {
 

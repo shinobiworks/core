@@ -44,6 +44,8 @@ class Converter {
 		foreach ( $atts_array as $key => $value ) {
 			++$i;
 			$space = $i === $max ? '' : ' ';
+			$key   = htmlspecialchars( $key );
+			$value = htmlspecialchars( $value );
 			$atts .= "{$key}=\"{$value}\"{$space}";
 		}
 		if ( $old_atts && is_string( $old_atts ) ) {
