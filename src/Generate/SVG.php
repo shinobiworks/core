@@ -7,7 +7,7 @@
  * @author     Shinobi Works <support@shinobiworks.com>
  * @license    https://www.gnu.org/licenses/gpl-3.0.html/ GPL v3 or later
  * @link       https://shinobiworks.com/
- * @since      0.6.0
+ * @since      1.0.0
  */
 
 namespace Shinobi_Works\Generate;

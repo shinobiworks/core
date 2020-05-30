@@ -1,10 +1,12 @@
 {
   "name": "shinobiworks/core",
   "type": "library",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Shinobi Works",
-      "email": "support@shinobiworks.com"
+      "email": "support@shinobiworks.com",
+      "homepage": "https://shinobiworks.com/"
     }
   ],
   "autoload": {
