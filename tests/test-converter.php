@@ -35,9 +35,9 @@ class ConverterTest extends TestCase {
 		$atts_array = [
 			'id'        => 'uniq_id',
 			'class'     => 'common-class',
-			'data-name' => 'shinobi works',
+			'data-name' => 'shinobi-works',
 		];
-		$expected   = 'id="uniq_id" class="common-class" data-name="shinobi works"';
+		$expected   = 'id="uniq_id" class="common-class" data-name="shinobi-works"';
 		$actual     = Converter::get_attributes( $atts_array );
 		$this->assertSame( $expected, $actual );
 		/**
