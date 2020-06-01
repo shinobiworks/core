@@ -40,7 +40,7 @@ class FormPartsTest extends WP_UnitTestCase {
 			],
 		];
 		foreach ( $args_arr as $args ) {
-			$actual   = Utils::esc_input( FormParts::input( $args['atts'] ) );
+			$actual   = FormParts::input( $args['atts'] );
 			$expected = $args['expected'];
 			$this->assertSame( $expected, $actual );
 		}
@@ -54,22 +54,64 @@ class FormPartsTest extends WP_UnitTestCase {
 
 		$args_arr = [
 			[
-				'expected' => "<textarea data-class=\"{$data_class}\"></textarea>",
+				'expected'     => "<textarea data-class=\"{$data_class}\"></textarea>",
 				// Default.
-				'atts'     => [],
+				'atts'         => [],
+				'entered_text' => '',
 			],
 			[
-				'expected' => "<textarea data-class=\"{$data_class}\" id=\"uniq_id\" class=\"common-class\"></textarea>",
+				'expected'     => "<textarea data-class=\"{$data_class}\" id=\"uniq_id\" class=\"common-class\">Entered text...</textarea>",
 				// Array has multiple attributes.
-				'atts'     => [
+				'atts'         => [
 					'id'    => 'uniq_id',
 					'class' => 'common-class',
 				],
+				'entered_text' => 'Entered text...',
 			],
 		];
 		foreach ( $args_arr as $args ) {
-			$actual = Utils::esc_textarea( FormParts::textarea( $args['atts'] ) );
+			$actual = FormParts::textarea( $args['atts'], $args['entered_text'] );
 			$this->assertSame( $args['expected'], $actual );
+		}
+	}
+
+	/**
+	 * Test selectbox()
+	 */
+	public function test_selectbox() {
+		$data_class = FormParts::SHINOBI_FORM_PARTS . ' shinobi-selectbox';
+
+		$args_arr = [
+			[
+				'name'             => 'test_select_1',
+				'atts'             => [
+					[
+						'value' => 'test_value',
+					],
+				],
+				'expected_options' => '<option value="test_value">test_value</option>',
+			],
+			[
+				'name'             => 'test_select_2',
+				'atts'             => [
+					[
+						'value' => '',
+						'label' => 'Select data...',
+					],
+					[
+						'value' => 'test_value_2',
+					],
+				],
+				'expected_options' => '<option value="">Select data...</option><option value="test_value_2">test_value_2</option>',
+			],
+		];
+
+		foreach ( $args_arr as $args ) {
+			$name             = $args['name'];
+			$expected_options = $args['expected_options'];
+			$expected         = "<select name=\"{$name}\" data-class=\"{$data_class}\">{$expected_options}</select>";
+			$actual           = FormParts::selectbox( $name, $args['atts'] );
+			$this->assertSame( $expected, $actual );
 		}
 	}
 

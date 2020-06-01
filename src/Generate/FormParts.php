@@ -27,13 +27,13 @@ class FormParts {
 	 * @param array $atts_arr is attribute of input tag.
 	 * @return string
 	 */
-	public static function input( $atts_arr = [], $echo = false ) {
-		$default_atts_arr = [
+	public static function input( $new_atts_arr = [], $echo = false ) {
+		$atts_arr = [
 			'type'       => 'text',
 			'data-class' => self::SHINOBI_FORM_PARTS . ' shinobi-input',
 		];
-		if ( is_array( $atts_arr ) && $atts_arr ) {
-			$atts_arr = array_replace( $default_atts_arr, $atts_arr );
+		if ( is_array( $new_atts_arr ) && $new_atts_arr ) {
+			$atts_arr = array_replace( $atts_arr, $new_atts_arr );
 		}
 		$atts  = Converter::get_attributes( $atts_arr );
 		$input = "<input $atts>";
@@ -50,15 +50,15 @@ class FormParts {
 	 * @param array $atts_arr is textarea attributes.
 	 * @return string
 	 */
-	public static function textarea( $atts_arr = [], $echo = false ) {
-		$default_atts_arr = [
+	public static function textarea( $new_atts_arr = [], $entered_text, $echo = false ) {
+		$atts_arr = [
 			'data-class' => self::SHINOBI_FORM_PARTS . ' shinobi-textarea',
 		];
-		if ( is_array( $atts_arr ) && $atts_arr ) {
-			$atts_arr = array_replace( $default_atts_arr, $atts_arr );
+		if ( is_array( $new_atts_arr ) && $new_atts_arr ) {
+			$atts_arr = array_replace( $atts_arr, $new_atts_arr );
 		}
 		$atts     = Converter::get_attributes( $atts_arr );
-		$textarea = "<textarea $atts></textarea>";
+		$textarea = "<textarea $atts>$entered_text</textarea>";
 		if ( $echo ) {
 			echo $textarea; // phpcs:ignore
 		} else {
@@ -82,12 +82,14 @@ class FormParts {
 					continue;
 				}
 				$value = $atts['value'];
+				$label = isset( $atts['label'] ) && $atts['label'] ? $atts['label'] : $value;
 				unset( $atts['value'] );
+				unset( $atts['label'] );
 				$atts = Converter::get_attributes( $atts );
 				if ( $atts ) {
 					$atts = " $atts";
 				}
-				$options .= "<option value=\"{$value}\"{$atts}>{$value}</option>";
+				$options .= "<option value=\"{$value}\"{$atts}>{$label}</option>";
 			}
 		}
 		$select_atts_arr = [
@@ -110,13 +112,13 @@ class FormParts {
 	 * @param array  $atts_arr
 	 * @return string
 	 */
-	public static function button( $button_text, $atts_arr = [], $echo = false ) {
-		$default_atts_arr = [
+	public static function button( $button_text, $new_atts_arr = [], $echo = false ) {
+		$atts_arr = [
 			'type'       => 'button',
 			'data-class' => self::SHINOBI_FORM_PARTS . ' shinobi-button',
 		];
-		if ( is_array( $atts_arr ) && $atts_arr ) {
-			$atts_arr = array_replace( $default_atts_arr, $atts_arr );
+		if ( is_array( $new_atts_arr ) && $new_atts_arr ) {
+			$atts_arr = array_replace( $atts_arr, $new_atts_arr );
 		}
 		$atts   = Converter::get_attributes( $atts_arr );
 		$button = "<button $atts>$button_text</button>";
