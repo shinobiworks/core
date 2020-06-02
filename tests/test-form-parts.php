@@ -115,4 +115,37 @@ class FormPartsTest extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Test button()
+	 */
+	public function test_button() {
+		$data_class = FormParts::SHINOBI_FORM_PARTS . ' shinobi-button';
+
+		$args_arr = [
+			[
+				'text'     => 'Click me!',
+				'atts'     => [
+					'name'  => 'test_button',
+					'value' => 'test_value',
+				],
+				'expected' => "<button type=\"button\" data-class=\"{$data_class}\" name=\"test_button\" value=\"test_value\">Click me!</button>",
+			],
+			[
+				'text'     => 'Submit',
+				'atts'     => [
+					'type'  => 'submit',
+					'name'  => 'content',
+					'value' => 'sample content',
+				],
+				'expected' => "<button type=\"submit\" data-class=\"{$data_class}\" name=\"content\" value=\"sample content\">Submit</button>",
+			],
+		];
+
+		foreach ( $args_arr as $args ) {
+			$text = $args['text'];
+			$atts = $args['atts'];
+			$this->assertSame( $args['expected'], FormParts::button( $text, $atts ) );
+		}
+	}
+
 }
