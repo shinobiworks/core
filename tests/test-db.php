@@ -239,6 +239,7 @@ class DB_Test extends WP_UnitTestCase {
 	 */
 	public function test_get_option() {
 		$this->assertFalse( DB::get_option( 'wrong_option_name' ) );
+		$this->assertSame( DB::get_option( 'default_option_value' ), '' );
 	}
 
 	/**

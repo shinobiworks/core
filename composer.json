@@ -20,7 +20,8 @@
   "require-dev": {
     "phpunit/phpunit": "7.*",
     "phpcompatibility/phpcompatibility-wp": "*",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.6"
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+    "wptrt/wpthemereview": "^0.2.1"
   },
   "scripts": {
     "test": "phpunit"

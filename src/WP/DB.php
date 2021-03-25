@@ -243,9 +243,9 @@ class DB {
 	/**
 	 * Get option value from shinobi options table
 	 *
-	 * @param string $option_name option name.
-	 * @param string $default_value default option value.
-	 * @return boolean|array
+	 * @param string $option_name
+	 * @param string $default_value
+	 * @return mixed
 	 */
 	public static function get_option( $option_name, $default_value = false ) {
 		$transient = self::shinobi_options_transient_pattern( $option_name );
@@ -254,7 +254,7 @@ class DB {
 			$_flag        = true;
 			$_options_arr = self::get_results( self::OPTIONS_TABLE );
 			if ( ! $_options_arr || ! is_array( $_options_arr ) ) {
-				return false;
+				return $default_value;
 			}
 			foreach ( $_options_arr as $index => $options ) {
 				if ( $option_name === $options->option_name ) {
