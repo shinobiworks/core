@@ -46,7 +46,7 @@ class DB {
 	 * @return boolean
 	 */
 	public static function create_table( $version = '1.0.0', $table_name = '', $sql = '' ) {
-		if ( '' === $table_name || '' === $sql ) {
+		if ( ! $table_name || ! $sql ) {
 			return false;
 		}
 		$installed_ver = self::get_table_version( $table_name );
