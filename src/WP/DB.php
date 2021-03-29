@@ -55,10 +55,10 @@ class DB {
 			return true; // This table already exists and same version.
 		}
 		global $wpdb;
-		$table_name      = $wpdb->prefix . $table_name;
-		$charset_collate = $wpdb->get_charset_collate();
+		$table_name_with_prefix = $wpdb->prefix . $table_name;
+		$charset_collate        = $wpdb->get_charset_collate();
 		include_once \ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( "CREATE TABLE $table_name ( $sql ) $charset_collate;" );
+		dbDelta( "CREATE TABLE $table_name_with_prefix ( $sql ) $charset_collate;" );
 		\update_option( "{$table_name}_table_ver", $version );
 		return true;
 	}
