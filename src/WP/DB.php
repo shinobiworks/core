@@ -67,7 +67,7 @@ class DB {
 	 * Get the table version
 	 *
 	 * @param string $table_name
-	 * @return string
+	 * @return mixed
 	 */
 	public static function get_table_version( $table_name = '' ) {
 		return \get_option( "{$table_name}_table_ver" );
