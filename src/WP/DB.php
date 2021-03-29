@@ -49,7 +49,7 @@ class DB {
 		if ( '' === $table_name || '' === $sql ) {
 			return false;
 		}
-		$installed_ver = \get_option( "{$table_name}_table_ver" );
+		$installed_ver = self::get_table_version( $table_name );
 		$is_table      = self::is_table_exists( $table_name );
 		if ( $is_table && $version === $installed_ver ) {
 			return true; // This table already exists and same version.
@@ -59,8 +59,18 @@ class DB {
 		$charset_collate = $wpdb->get_charset_collate();
 		include_once \ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( "CREATE TABLE $table_name ( $sql ) $charset_collate;" );
-		\update_option( $table_name, $version );
+		\update_option( "{$table_name}_table_ver", $version );
 		return true;
+	}
+
+	/**
+	 * Get the table version
+	 *
+	 * @param string $table_name
+	 * @return string
+	 */
+	public static function get_table_version( $table_name = '' ) {
+		return \get_option( "{$table_name}_table_ver" );
 	}
 
 	/**
